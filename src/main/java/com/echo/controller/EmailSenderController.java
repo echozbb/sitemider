@@ -27,6 +27,7 @@ public class EmailSenderController {
 	public ResponseEntity<Boolean> send(@RequestBody(required = true) EmailVO emailVo) throws Exception {
 
 		LOGGER.info("Received restful send email request");
+		emailService.validEmailVo(emailVo);
 		if (Boolean.TRUE.equals(emailService.sendEmail(emailVo))){
 			return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
 		}

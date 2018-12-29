@@ -1,6 +1,7 @@
 package com.echo.service;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.echo.domain.EmailVO;
+import com.echo.exception.ValidationException;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring-config.xml" })
@@ -36,15 +38,39 @@ public class EmailServiceTest {
 		Assert.assertTrue(emailService.sendEmail(emailVo));
 	}
 	
-	@Test(expected = Exception.class)
-	public void send_mail_exception() throws Exception {
-		emailVo.setBody("");
-		emailService.sendEmail(emailVo);
+	public void send_mail_wo_cc_success() {
+		emailVo.setBccList(null);
+		emailVo.setCcList(null);
+		Assert.assertTrue(emailService.sendEmail(emailVo));
 	}
 	
 	@Test
 	public void send_mail_failed() throws Exception {
 		emailVo.setRecipients(Arrays.asList("invalidemailaddress"));
 		Assert.assertFalse(emailService.sendEmail(emailVo));
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void send_mail_missing_body() throws Exception {
+		emailVo.setBody("");
+		emailService.validEmailVo(emailVo);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void send_mail_missing_recipient() throws Exception {
+		emailVo.setRecipients(Collections.emptyList());
+		emailService.validEmailVo(emailVo);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void send_mail_missing_content() throws Exception {
+		emailVo.setBody(null);
+		emailService.validEmailVo(emailVo);
+	}
+	
+	@Test(expected = ValidationException.class)
+	public void send_mail_missing_header() throws Exception {
+		emailVo.setHeader(null);
+		emailService.validEmailVo(emailVo);
 	}
 }

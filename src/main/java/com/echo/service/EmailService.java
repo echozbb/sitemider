@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import com.echo.domain.EmailVO;
+import com.echo.exception.ValidationException;
 
 @Service
 public class EmailService {
@@ -21,24 +22,8 @@ public class EmailService {
 		this.providerList = providers;
 	}
 
-	public Boolean sendEmail(EmailVO emailVo) throws Exception {
-		
-		if (emailVo == null) {
-			throw new Exception("Email is empty");
-		}
-		
-		if (CollectionUtils.isEmpty(emailVo.getRecipients()) ) {
-			throw new Exception("Recipients is empty");
-		}
-		
-		if (StringUtils.isEmpty(emailVo.getHeader())) {
-			throw new Exception("Header is empty");
-		}
-		
-		if (StringUtils.isEmpty(emailVo.getBody())) {
-			throw new Exception("Body is empty");
-		}
-		
+	public Boolean sendEmail(EmailVO emailVo){
+
 		for (EmailProvider provider: this.providerList) {
 			if (Boolean.TRUE.equals(provider.send(emailVo))) {
 				return Boolean.TRUE;
@@ -46,6 +31,24 @@ public class EmailService {
 		}
 		
 		return Boolean.FALSE;
+	}
+	
+	public void validEmailVo(EmailVO emailVo) throws ValidationException {
+		if (emailVo == null) {
+			throw new ValidationException("Email is empty");
+		}
+		
+		if (CollectionUtils.isEmpty(emailVo.getRecipients()) ) {
+			throw new ValidationException("Recipient is empty");
+		}
+		
+		if (StringUtils.isEmpty(emailVo.getHeader())) {
+			throw new ValidationException("Header is empty");
+		}
+		
+		if (StringUtils.isEmpty(emailVo.getBody())) {
+			throw new ValidationException("Body is empty");
+		}
 	}
 
 
