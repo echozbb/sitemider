@@ -46,7 +46,7 @@ public class SendGridEmailService implements EmailProvider{
  		this.jsonHeaders = new HttpHeaders();
  		jsonHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
  		jsonHeaders.add(HttpHeaders.CONTENT_ENCODING, "gzip");
- 		jsonHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + API_KEY);
+ 		jsonHeaders.setBearerAuth(API_KEY);
 	}
 	
 	@Override
